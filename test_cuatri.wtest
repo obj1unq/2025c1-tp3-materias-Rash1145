@@ -1,0 +1,40 @@
+import universidad.*
+import estudiante.*
+import materias.*
+import estudiantes.*
+
+describe "Tests de inscripcíon" {
+  test "Roque puede inscribirse en Objetos 2, pero no en Objetos 3 (porque le falta Objetos 2) ni en Objetos 1 (porque ya la tiene aprobada)" {
+    roque.inscripcion(objetos_2)
+    assert.throwsException({roque.inscripcion(objetos_3)})
+    assert.throwsException({roque.inscripcion(objetos_1)})
+  }
+
+  test "Roque puede inscribirse: en Programación, en Objetos 2 y Programación Concurrente; en Medicina, en Biología 2"{
+    roque.inscripcion(objetos_2)
+    roque.inscripcion(prograConcurrente)
+    roque.inscripcion(biologia_2)
+    assert.equals(#{objetos_2, prograConcurrente, biologia_2}, roque.materias_en_curso())
+  }
+
+  test "Si se inscriben, en este orden, Luisa, Romina, Alicia y Roque en Objetos 2, entonces las tres primeras quedan confirmadas, y Roque queda en lista de espera"{
+    luisa.inscripcion(objetos_2)
+    romina.inscripcion(objetos_2)
+    alicia.inscripcion(objetos_2)
+    roque.inscripcion(objetos_2)
+    assert.equals([luisa, romina, alicia], objetos_2.cupo())
+    assert.equals([roque], objetos_2.listaDeEspera())
+  }
+
+  test "Si después se da de baja Romina en Objetos 2, entonces Roque pasa a tener la inscripción confirmada en esa materia"{
+    luisa.inscripcion(objetos_2)
+    romina.inscripcion(objetos_2)
+    alicia.inscripcion(objetos_2)
+    roque.inscripcion(objetos_2)
+    assert.equals([luisa, romina, alicia], objetos_2.cupo())
+    assert.equals([roque], objetos_2.listaDeEspera())
+    romina.darse_baja(objetos_2)
+    assert.equals([luisa, alicia, roque], objetos_2.cupo())
+    assert.equals([], objetos_2.listaDeEspera())
+  }
+}
